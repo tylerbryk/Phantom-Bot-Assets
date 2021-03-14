@@ -1,0 +1,41 @@
+dz_rules_text = '''**__Requirements:__**
+> • TH13 Only
+> • BK70, AQ70, GW45, RC20
+> • Max or near max bases only
+
+**__Clan Games:__**
+> • Not mandatory 
+> • 1000 pt. minimum if you do participate 
+
+**__Donations:__** 
+> • No donation ratio or requirements
+> • Donate as much as possible
+> • Make an effort to fill pending donation requests before requesting yourself
+> • Having little or no donations at the end of the season may result in a kick
+
+**__War Rules:__**
+> • All heroes must be up for war 
+> • No hits in the first hour
+> • First hour is used to scout and claim bases of the **same** town hall
+> • Claim the highest ranked base that you are confident in tripling
+> • If a claimed base has not been hit after the first 12 hours, it is fair game
+> • Feel free to cleanup/triple a base after the 12-hour mark
+> • Both attacks are **mandatory** and should be done by the 23-hour mark
+
+**__CWL Rules:__**
+> • All TH13's must be available
+> • All heroes must be up during CWL week
+> • CWL lineups will be sent out before the 1st day of each month 
+> • You may be assigned to this clan, or a similarly ranked clan in the family
+> • Clan selection is based on war hits, war defenses, and friendly challenges 
+> • Before attacking in CWL, you are **required** to submit a plan on Discord
+> • No attacking in the first hour as this time should be used to claim a base
+> • Feel free to reach out to leadership should you ever need anything
+
+**__Attack Planning Resources:__**
+> • Spotter on Voice Chat
+> • Collaborating with other team members
+> • Using our clash / Burnt Base bots
+
+⬆️ **SCROLL UP!** ⬆️
+'''
