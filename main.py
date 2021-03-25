@@ -1,6 +1,8 @@
 import os
 import discord
 import link as lk
+import reddit as rd
+from datetime import datetime
 from checkroles import checkroles
 from flaskserver import start_server
 from discord.ext import commands, tasks
@@ -30,7 +32,8 @@ ga_emoji     = 820103306604707860
 @client.event
 async def on_ready():
 	print('Bot Online!')
-	update_db_loop.start()
+	#update_db_loop.start()
+	reddit_reminder.start()
 	await client.change_presence(activity=discord.Game('Clash of Clans'))
 
 
@@ -59,6 +62,10 @@ async def on_raw_reaction_add(ctx):
 		await channel.send('{} reacted with an invalid option!\nPlease visit {} and select a clan application type!'.format(ctx.member.mention, server_rules))
 
 
+@client.listen()
+async def on_message(ctx):
+	await rd.check_subred(ctx, client)
+
 @client.command()
 async def check(ctx, role):
 	await checkroles(ctx, role)
@@ -77,7 +84,11 @@ async def export(ctx):
 
 @client.command()
 async def update(ctx):
-	await lk.update_db()
+	await lk.update_db(ctx)
+
+@client.command()
+async def len(ctx):
+	await lk.db_len(ctx)
 
 #@client.command()
 #async def delete(ctx):
@@ -85,9 +96,14 @@ async def update(ctx):
 
 
 # =============== BACKGROUND TASKS ===================
-@tasks.loop(minutes=2) 
-async def update_db_loop():
-	await lk.update_db()
+#@tasks.loop(minutes=30) 
+#async def update_db_loop():
+	#return await lk.update_db()
+
+@tasks.loop(minutes=1)
+async def reddit_reminder():
+	if datetime.now().hour == 18 and datetime.now().minute == 0:
+		return await rd.red_reminder(client)
 
 #@tasks.loop(minutes=1) 
 #async def check_for_inactives():

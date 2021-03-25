@@ -3,9 +3,10 @@ os.system('pip install -U coc.py')
 import coc
 import time
 import discord
+import traceback
 import pandas as pd
 from coc import utils
-client = coc.login(os.getenv('EMAIL'), os.getenv('COCPWD'))
+client = coc.login(os.getenv('EMAIL'), os.getenv('COCPWD'), client=coc.Client, key_names='Phantom Bot', key_count=1)
 
 
 async def add_link(ctx, tag, raw_user):
@@ -15,9 +16,14 @@ async def add_link(ctx, tag, raw_user):
 		for i in df['discord_name'].loc[df['player_tag'] == tag]: name = i
 		return await ctx.send(embed=discord.Embed(title='Already Linked!', description='{} is linked to {}'.format(player_tag, name)))
 	try: user = await find_user(ctx, raw_user)
-	except Exception: return await ctx.send(embed=discord.Embed(description="That user does not exist in this server!"))
+	except Exception: return await ctx.send(embed=discord.Embed(description="That user is not in this channel!"))
+	# ==============================================================================
 	try: player_name, player_th, player_clan = await cocID_to_name(tag)
-	except Exception: return await ctx.send(embed=discord.Embed(description='Invalid Player Tag!'))
+	except Exception as error: 
+		exc = ''.join(traceback.format_exception(type(error), error, error.__traceback__, chain=True))
+		print(exc)
+		return await ctx.send(embed=discord.Embed(description='Invalid Player Tag!'))
+	# ===============================================================================
 	new = pd.DataFrame(data={'discord_id': [user.id], 'discord_name': ['{}#{}'.format(user.name, user.discriminator)], 'player_tag': [tag], 'player_name': [player_name], 'town_hall':[player_th], 'clan':[player_clan]})
 	pd.concat([df, new], ignore_index=True).to_csv('db.csv', index=False)
 	return await ctx.send(embed=discord.Embed(title='Linked!', description='{} linked to {}#{}'.format(tag, user.name, user.discriminator)))
@@ -25,13 +31,13 @@ async def add_link(ctx, tag, raw_user):
 
 
 async def get_link(ctx, arg):
-	if '#' in arg:		# <---- If ARG is a player tag
+	if '#' in arg:
 		df = pd.read_csv('db.csv')
 		if df.loc[df['player_tag'] == arg].empty:
 			return await ctx.send(embed=discord.Embed(title='{} is not linked!'.format(arg), description='Please use %link <player_tag> <@discord_user> to link an account.'))
 		for i in df['discord_id'].loc[df['player_tag'] == arg]: userID = i
 		rows = df.loc[df['discord_id'] == userID]	
-	elif '@' in arg: 	# <---- If ARG is a @discord user
+	elif '@' in arg:
 		try: user = await find_user(ctx, arg)
 		except Exception: return await ctx.send(embed=discord.Embed(description="That user does not exist in this server!"))
 		df = pd.read_csv('db.csv')
@@ -47,19 +53,25 @@ async def get_link(ctx, arg):
 
 
 async def export_list(ctx):
-	return await ctx.send(file=discord.File('db.csv', filename='linked_players.csv'))
+	return await ctx.send(file=discord.File('db.csv', filename='linked_accounts.csv'))
 
 
-async def update_db():
+async def update_db(ctx):
+	t0 = time.time()
+	msg = await ctx.send(embed=discord.Embed(title='Updating...', description='Please wait until update is finished\nETA: 30 seconds'))
 	df = pd.read_csv('db.csv')
 	for index, row in df.iterrows():
 		row['player_name'], row['town_hall'], row['clan'] = await cocID_to_name(row['player_tag'])
 		df.loc[index] = row
-		time.sleep(.1)
-	df = df.sort_values(by=['discord_name', 'town_hall'])
+	df = df.sort_values(by=['discord_name', 'player_name'])
 	df.to_csv('db.csv', index=False)
-	return
+	t1 = time.time()
+	return await msg.edit(embed=discord.Embed(title='Update Complete!', description='Time: {:.1f} seconds'.format(t1-t0)))
 
+
+async def db_len(ctx):
+	df = pd.read_csv('db.csv')
+	return await ctx.send(embed=discord.Embed(description='{} Linked Accounts!'.format(df.shape[0])))
 
 
 # =============== HELPERS ========================
