@@ -1,14 +1,14 @@
 server_rules_text = '''1)** __Nickname__**
-> • Your server nickname must represent your clash of clans account name
+> • Your server nickname must represent your clash of clans account name(s)
 
 2)** __No Toxicity__**
-> • This includes and is not limited to, homophobia, racism, sexism and intentionally being harmful to others 
+> • This includes and is not limited to, homophobia, racism, sexism, and intentionally being harmful to others 
 
 3)** __No BST__**
 > • No buying, selling, or trading of accounts
 
 4)** __No Drama__**
-> • No starting or continuing drama 
+> • No starting or escalating drama 
 > • If you have a problem, deal with it privately
 > • If you need help dealing with anything related to this, bring it to leadership
 
@@ -16,34 +16,34 @@ server_rules_text = '''1)** __Nickname__**
 > • Everyone is entitled to their political opinions, but clash of clans is not the place to talk about them
 
 6)** __CWL__**
-> • Must be understanding that you may be relocated for CWL 
+> • Participants must register via the form sent at the end of each month
+> • Players must be understanding that they may be relocated for CWL 
 > • This allows players to be in the best league based on their skill level 
-> • CWL is mandatory for TH13 unless notified at least 5 days in advanced
-> • TH11 and TH12 can opt-in via the sign-up form
 > • Heroes must be up for CWL, no exceptions 
 > • Participants will vote on who earns bonuses for each clan
 
 
+
 💡『 Clan Info 』 💡 
 
-<:DZ:820093624002805771> **DANGER ZONE**
+<:DZ:852634339844816966> **DANGER ZONE**
 > • Main clan in the Phantom family
-> • Max or near max TH13’s only
-> • Currently ranked Champions II 
+> • TH14 only
+> • Currently ranked Champions I 
 > • Competitive and helpful environment 
 > • Read <#819709187613392914> for more info 
 > • FC’s will be required upon entry for new applicants
 
-<:GC:820093624456183808> **GAME CHANGERS** 
-> • TH13 or near max TH12 only
+<:GC:852634339954917466> **GAME CHANGERS** 
+> • TH14 or near max TH13 only
 > • Currently ranked Masters I
 > • Competitive and helpful environment 
 > • Read <#819709187613392915> for more info
 > • FC’s will be required upon entry for new applicants
 
 <:SC:820093624434950154> **STORMCLOAKS**
-> • TH11+ only
-> • Currently ranked Masters II  
+> • TH12+ only
+> • Currently ranked Masters I  
 > • Calm and friendly environment 
 > • Read <#819709187822583808> for more info
 > • FC’s will be required upon entry for new applicants
