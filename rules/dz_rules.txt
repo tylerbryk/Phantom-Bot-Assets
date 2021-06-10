@@ -1,6 +1,6 @@
 dz_rules_text = '''**__Requirements:__**
-> • TH13 Only
-> • BK70, AQ70, GW45, RC20
+> • TH14 Only
+> • BK80, AQ80, GW55, RC30
 > • Max or near max bases only
 
 **__Clan Games:__**
@@ -23,7 +23,7 @@ dz_rules_text = '''**__Requirements:__**
 > • Both attacks are **mandatory** and should be done by the 23-hour mark
 
 **__CWL Rules:__**
-> • All TH13's must be available
+> • Register via the form sent at the end of each month
 > • All heroes must be up during CWL week
 > • CWL lineups will be sent out before the 1st day of each month 
 > • You may be assigned to this clan, or a similarly ranked clan in the family
