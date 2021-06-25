@@ -3,7 +3,6 @@ os.system('pip install -U coc.py')
 import coc
 import time
 import discord
-import traceback
 import pandas as pd
 from coc import utils
 client = coc.login(os.getenv('EMAIL'), os.getenv('COCPWD'), client=coc.Client, key_names='Phantom Bot', key_count=1)
@@ -19,9 +18,7 @@ async def add_link(ctx, tag, raw_user):
 	except Exception: return await ctx.send(embed=discord.Embed(description="That user is not in this channel!"))
 	# ==============================================================================
 	try: player_name, player_th, player_clan = await cocID_to_name(tag)
-	except Exception as error: 
-		exc = ''.join(traceback.format_exception(type(error), error, error.__traceback__, chain=True))
-		print(exc)
+	except Exception: 
 		return await ctx.send(embed=discord.Embed(description='Invalid Player Tag!'))
 	# ===============================================================================
 	new = pd.DataFrame(data={'discord_id': [user.id], 'discord_name': ['{}#{}'.format(user.name, user.discriminator)], 'player_tag': [tag], 'player_name': [player_name], 'town_hall':[player_th], 'clan':[player_clan]})
@@ -85,3 +82,26 @@ async def cocID_to_name(tag):
 		return Exception
 	player = await client.get_player(tag)
 	return player.name, player.town_hall, str(player.clan)
+
+
+# ============== DATABASE CLEANERS =================
+async def get_server_members(client):
+	guild = client.get_guild(819709187239313428)
+	members = guild.members
+	mems = []
+	for member in members:
+		mems.append(member.id)
+	return mems
+
+async def clean_db(ctx, client):
+	members = await get_server_members(client)
+	db = pd.read_csv('db.csv')
+	purge = []
+	for row, data in db.iterrows():
+		if data['discord_id'] not in members:
+			purge.append(data['discord_name'])
+	if not purge:
+		await ctx.send(embed=discord.Embed(title='No Purgeable Players!'))
+		return
+	await ctx.send(embed=discord.Embed(title='Purgeable Players!', description='{}'.format('\n'.join(purge))))
+	return

@@ -4,7 +4,7 @@ async def checkroles(ctx, raw_roleID):
 	roleID = raw_roleID.translate({ord(i): None for i in '<@&>'})
 	if roleID == 'none' or roleID == 'None' or roleID == 'NONE':
 		members = await get_members_nr(ctx, [])
-		return await ctx.send(embed=discord.Embed(title='Users with No Role', description="\n".join(members)))
+		return await ctx.send(embed=discord.Embed(title='Users with no roles:', description="\n".join(members)))
 	
 	try: role = ctx.guild.get_role(int(roleID))
 	except ValueError:
