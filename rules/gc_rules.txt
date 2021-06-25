@@ -1,20 +1,19 @@
 gc_rules_text = '''**__Requirements:__**
-> • TH13 Only
-> • BK65,  AQ65,  GW40
+> • TH12 BK50, AQ50, GW20
+> • TH13 BK60, AQ60, GW35
 > • Base at least 90% max from previous Town Hall
 
 **__Clan Games:__**
-> • Not mandatory 
-> • 1000 pt. minimum if you do participate 
+> • 1000 point minimum
 
-**__Donations:__** 
+**__Donations:__**
 > • No donation ratio or requirements
 > • Donate as much as possible
 > • Make an effort to fill pending donation requests before requesting yourself
 > • Having little or no donations at the end of the season may result in a kick
 
 **__War Rules:__**
-> • All heroes must be up for war 
+> • All heroes must be up for war
 > • No hits in the first hour
 > • First hour is used to scout and claim bases of the **same** town hall
 > • Claim the highest ranked base that you are confident in tripling
@@ -23,11 +22,11 @@ gc_rules_text = '''**__Requirements:__**
 > • Both attacks are **mandatory** and should be done by the 23-hour mark
 
 **__CWL Rules:__**
-> • All TH13's must be available
+> • Register via the form sent at the end of each month
 > • All heroes must be up during CWL week
-> • CWL lineups will be sent out before the 1st day of each month 
+> • CWL lineups will be sent out before the 1st day of each month
 > • You may be assigned to this clan, or a similarly ranked clan in the family
-> • Clan selection is based on war hits, war defenses, and friendly challenges 
+> • Clan selection is based on war hits, war defenses, and friendly challenges
 > • Before attacking in CWL, you are **required** to submit a plan on Discord
 > • No attacking in the first hour as this time should be used to claim a base
 > • Feel free to reach out to leadership should you ever need anything
@@ -39,3 +38,8 @@ gc_rules_text = '''**__Requirements:__**
 
 ⬆️ **SCROLL UP!** ⬆️
 '''
+
+@client.command()
+async def clan(ctx):
+	await ctx.send(file=discord.File('banners/gc_rules.png'))
+	await ctx.send(gc_rules_text)
