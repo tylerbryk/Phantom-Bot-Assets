@@ -55,7 +55,11 @@ def get_roles(guild):
 	CW = guild.get_role(819709187268411405),
 	ML = guild.get_role(825947360538132500),
 	GS = guild.get_role(837775900463726662),
-	SW = guild.get_role(849075141560631307))
+	SW = guild.get_role(849075141560631307),
+	TH14 = guild.get_role(863856340949794827),
+	TH13 = guild.get_role(863856679066402816),
+	TH12 = guild.get_role(863857110600384512),
+	TH11 = guild.get_role(863857326813609994))
 	return roles
 
 
@@ -154,6 +158,22 @@ async def give_roles(ctx, client):
 	await ctx.send(embed=discord.Embed(title='CWL roles assigned to {} players!'.format(accs_linked), description='Failed to assign roles to the following players:\n{}'.format('\n'.join(failed_players))))
 	return
 
+
+async def check_cwldb(ctx):
+	cwl = pd.read_csv('cwl.csv')
+	db  = pd.read_csv('db.csv')
+	in_db = []
+	failed_players = []
+	for clan, player_list in cwl.iteritems():
+		for player in player_list:
+			if pd.isna(player):
+				continue
+			try: 
+				in_db.append(db.loc[db['player_name'] == player]['discord_id'].item())
+			except:
+				print('Failed to locate {} in the database!'.format(player))
+				failed_players.append(player)
+	return
 
 
 # ============================================================
@@ -341,3 +361,43 @@ async def get_attack_info(war):
 	info['h_dest'] = round((info['h_dest'] / war.team_size), 2)
 	info['e_dest'] = round((info['e_dest'] / war.team_size), 2)
 	return info
+
+# ===========================================================
+# Tournament Roles
+# ===========================================================
+
+async def give_tournament_roles(ctx, client):
+	guild = client.get_guild(guild_id)
+	try: roles = get_roles(guild)
+	except Exception: await ctx.send('Error getting roles from ID!')
+	
+	data = pd.read_csv('tourn.csv')
+	db = pd.read_csv('db.csv')
+
+	tags = []
+	for key, val in data.iterrows():
+		tags.append(val[0].upper())
+
+	accs_linked = 0
+	failed_players = []
+	for tag in tags:
+		try: 
+			id = db.loc[db['player_tag'] == tag]['discord_id'].item()
+			th = db.loc[db['player_tag'] == tag]['town_hall'].item()
+		except ValueError:
+			print('Failed to locate {} in the database!'.format(tag))
+			failed_players.append(tag)
+		try: user = guild.get_member(id)
+		except Exception: 
+			print('Error retrieving {} profile from ID!'.format(tag))
+			failed_players.append(tag)
+		try: role = roles[('TH'+str(th))]
+		except KeyError: print('Townhall level {} doesn\'t exist in DB!{}'.format(('TH'+str(th)), tag))
+		try: await user.add_roles(role)
+		except Exception: 
+			print('Failed to give {} roles!'.format(tag))
+			failed_players.append(tag)
+		accs_linked += 1
+	await ctx.send(embed=discord.Embed(title='Tournament roles assigned to {} players!'.format(accs_linked), description='Failed to assign roles to the following tags:\n{}'.format('\n'.join(failed_players))))
+
+	return
