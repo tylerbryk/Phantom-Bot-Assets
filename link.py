@@ -5,7 +5,17 @@ import time
 import discord
 import pandas as pd
 from coc import utils
+import pymysql
 client = coc.login(os.getenv('EMAIL'), os.getenv('COCPWD'), client=coc.Client, key_names='Phantom Bot', key_count=1)
+
+async def connect_db():
+	db = pymysql.connect(
+    host=os.getenv('HOST'),
+    user=os.getenv('USER'),
+    password=os.getenv('COCPWD'),
+    database=os.getenv('DB')
+	)
+	return db.cursor()
 
 
 async def add_link(ctx, tag, raw_user):
