@@ -47,11 +47,6 @@ class PhantomBot(commands.Bot):
     def run_bot(self):
         # Server.start()
         super().run(os.getenv('TOKEN'))
-        # x = t.strftime('Ended %-Dd %-Hh %-Mm ago')
-        # x = x.replace(' 0d ', ' ')
-
-        # 'some string'.rjust(5, ' ')
-        # print(f'{num:10}')
 
 
 if __name__ == '__main__':
