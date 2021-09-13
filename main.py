@@ -1,10 +1,11 @@
 import os
 import coc
+import time
 # import Server
 import discord
 from discord.ext import commands
 
-extensions = ['LinkCommands', 'WarCommands', 'MiscCommands']
+extensions = ['LinkCommands', 'WarCommands', 'MiscCommands', 'RedditCommands']
 
 GUILD = 819709187239313428
 EMOJI_GUILD = 803663172762337350
@@ -36,6 +37,7 @@ class PhantomBot(commands.Bot):
         self.guild = GUILD
         self.emoji_guild = EMOJI_GUILD
         self.emoji_dict = emoji_dict
+        self.start_time = time.time()
         self.coc = coc.login(os.getenv('EMAIL'), os.getenv('COCPWD'), client=coc.Client)
         for ext in extensions:
             self.load_extension(ext)
