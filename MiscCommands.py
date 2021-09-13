@@ -5,22 +5,18 @@ from datetime import datetime
 from discord.ext import commands, tasks
 
 # === Applicant Variables ===
-message_id = 858441901416775700
+message_id = 885994753680867378
 dz_channel = 819709187822583813
 dl_channel = 819709187822583816
-gc_channel = 819709187822583814
 wlc_channel = 819709187822583812
 dz_role = '<@&819709187285975073>'
 dl_role = '<@&819709187285975071>'
-gc_role = '<@&819709187285975072>'
 rc_role = '<@&819709187285975070>'
 sr_rules = '<#819709187613392913>'
 dz_rules = '<#819709187613392914>'
 dl_rules = '<#819709187822583808>'
-gc_rules = '<#819709187613392915>'
 dz_emoji = 852634339844816966
 dl_emoji = 858033764453580820
-gc_emoji = 852634339954917466
 ga_emoji = 820103306604707860
 
 # === Recruitment Variables ===
@@ -75,10 +71,6 @@ class MiscCommands(commands.Cog):
             channel = self.client.get_channel(dl_channel)
             await channel.send(message.format(ctx.member.mention,
                                               'Downfall Legend', sr_rules, dl_rules, dl_role))
-        elif ctx.emoji.id == gc_emoji:
-            channel = self.client.get_channel(gc_channel)
-            await channel.send(message.format(ctx.member.mention,
-                                              'Game Changers', sr_rules, gc_rules, gc_role))
         elif ctx.emoji.id == ga_emoji:
             channel = self.client.get_channel(wlc_channel)
             await channel.send('{} is a **General Applicant**\n\nPlease do the following:\n1. Read {}\n2. Send a screenshot of your base and profile\n3. Send your player tag (Ex: #5GC47AE)\n\nA {} will be online to assist you shortly!'.format(ctx.member.mention, sr_rules, rc_role))

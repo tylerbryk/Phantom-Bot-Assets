@@ -4,15 +4,18 @@ import discord
 import pandas as pd
 from discord.ext import commands
 
+ROLE_LEADERSHIP = 819709187315466264
+ROLE_BURNT_BASE = 819716009861971989
+
 
 class CwlCommands(commands.Cog):
     def __init__(self, client):
         self.client = client
 
-    @commands.command(name='give')
+    @commands.command(name='cwlbuild')
     @commands.has_permissions(administrator=True)
-    async def give_roles(self, ctx):
-        msg = await ctx.send(embed=discord.Embed(title='Assigning CWL Roles!', color=0xf1c40f,
+    async def build_cwl(self, ctx):
+        msg = await ctx.send(embed=discord.Embed(title='Building CWL Channels & Roles!', color=0xf1c40f,
                                                  description='Hang tight, This operation may take several minutes.'))
         guild = self.client.get_guild(self.client.guild)
         db, cursor = await self.connect_db()
@@ -21,9 +24,11 @@ class CwlCommands(commands.Cog):
 
         failed = []
         for clan, player_list in cwl.iteritems():
+            active_players = 0
             for player in player_list:
                 if pd.isna(player):
                     continue
+                active_players += 1
                 cursor.execute('SELECT discord_id FROM linked_accounts WHERE player_tag = "{}"'.format(player))
                 result = cursor.fetchone()
                 if not result:
@@ -36,25 +41,54 @@ class CwlCommands(commands.Cog):
                 except Exception:
                     failed.append(player)
                     continue
+            cursor.execute('SELECT cwl_role_id FROM clans WHERE abv = "{}"'.format(clan))
+            result = cursor.fetchone()
+            overwrites = {
+                guild.get_role(ROLE_LEADERSHIP): discord.PermissionOverwrite(view_channel=True),
+                guild.get_role(ROLE_BURNT_BASE): discord.PermissionOverwrite(view_channel=True),
+                guild.get_role(result[0]): discord.PermissionOverwrite(view_channel=True),
+                guild.default_role: discord.PermissionOverwrite(view_channel=False)
+            }
+            category = await guild.create_category(name=f'════ {clan} CWL ════', overwrites=overwrites)
+            await category.create_text_channel(name=f'{clan.lower()}-cwl')
+            if active_players < 30:
+                for i in range(1, 16):
+                    await category.create_text_channel(name=f'base-{i}-{clan.lower()}')
         if failed:
             players = [(await self.client.coc.get_player(tag)).name for tag in failed]
             failmsg = [tag + ' - ' + name for (tag, name) in zip(failed, players)]
-            return await msg.edit(embed=discord.Embed(title='CWL Roles Assigned!', color=0x287e29,
+            return await msg.edit(embed=discord.Embed(title='CWL Channels & Roles Built!', color=0x287e29,
                                                       description='Role assignment failed on:\n{}'
                                                       .format('\n'.join(failmsg))))
-        return await msg.edit(embed=discord.Embed(title='CWL Roles Assigned!', color=0x287e29))
+        return await msg.edit(embed=discord.Embed(title='CWL Channels & Roles Built!', color=0x287e29))
 
-    @commands.command(name='remove-cwl')
+    @commands.command(name='cwldestroy')
     @commands.has_permissions(administrator=True)
     async def remove_cwl_roles(self, ctx):
-        msg = await ctx.send(embed=discord.Embed(title='Removing CWL Roles!', color=0xf1c40f,
+        msg = await ctx.send(embed=discord.Embed(title='Removing CWL Channels & Roles!', color=0xf1c40f,
                                                  description='Hang tight, this operation may take a few minutes.'))
         guild = self.client.get_guild(self.client.guild)
+
+        # Remove Roles
         roles = (await self.build_roles(guild)).values()
         for role in roles:
             for member in role.members:
                 await member.remove_roles(role)
-        return await msg.edit(embed=discord.Embed(title='CWL Roles Removed!', color=0x287e29))
+
+        # Destroy Channels
+        n_cat, n_ch = 0, 0
+        for category in guild.by_category():
+            if category[0] is None:
+                continue
+            if 'CWL' in category[0].name:
+                channels = category[0].channels
+                for channel in channels:
+                    await channel.delete()
+                    n_ch += 1
+                await category[0].delete()
+                n_cat += 1
+        return await msg.edit(embed=discord.Embed(title='CWL Channels & Roles Removed!', color=0x287e29,
+                                                  description=f'\u274C {n_cat} Categories\n\u274C {n_ch} Channels'))
 
     @commands.command(name='remove-tourn')
     @commands.has_permissions(administrator=True)
