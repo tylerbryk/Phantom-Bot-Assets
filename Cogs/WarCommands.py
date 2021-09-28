@@ -12,7 +12,7 @@ class WarCommands(commands.Cog):
         self.client = client
 
     @commands.command(name='war')
-    async def war_ping(self, ctx, abv):
+    async def war(self, ctx, abv, *no_ping):
         db, cursor = await self.connect_db()
         cursor.execute('SELECT * FROM clans WHERE abv = "{}"'.format(abv))
         result = cursor.fetchall()
@@ -26,35 +26,34 @@ class WarCommands(commands.Cog):
         gmt = datetime.fromtimestamp(time.mktime(time.gmtime()))
         d = '**War Against**\n{} ({})\n\n'.format(war.opponent.name, war.opponent.tag)
         if war.state == 'preparation':
-            t = time.gmtime((war.start_time.time - gmt).total_seconds())
-            d += '**War State**\nPreparation ({} vs {})\nStarts in {}\n\n'.format(war.team_size, war.team_size,
-                                                                                  time.strftime('%Hh %Mm', t))
+            t = await self.format_time((war.start_time.time - gmt).total_seconds())
+            d += '**War State**\nPreparation ({} vs {})\nStarts in {}\n\n'.format(war.team_size, war.team_size, t)
         elif war.state == 'inWar':
-            t = time.gmtime((war.end_time.time - gmt).total_seconds())
-            d += '**War State**\nBattle Day ({} vs {})\nEnds in {}\n\n'.format(war.team_size, war.team_size,
-                                                                               time.strftime('%Hh %Mm', t))
+            t = await self.format_time((war.end_time.time - gmt).total_seconds())
+            d += '**War State**\nBattle Day ({} vs {})\nEnds in {}\n\n'.format(war.team_size, war.team_size, t)
         elif war.state == 'warEnded':
-            t = time.gmtime((gmt - war.end_time.time).total_seconds())
-            d += '**War State**\nWar Ended ({} vs {})\nEnded {} ago\n\n'.format(war.team_size, war.team_size,
-                                                                                time.strftime('%Hh %Mm', t))
+            t = await self.format_time((gmt - war.end_time.time).total_seconds())
+            d += '**War State**\nWar Ended ({} vs {})\nEnded {} ago\n\n'.format(war.team_size, war.team_size, t)
         else:
             clan = await self.client.coc.get_clan(tag)
-            return await ctx.send('{} does not have any recent war activity!'.format(clan.name))
+            return await ctx.send(embed=discord.Embed(title='{} is not in war!'.format(clan.name), color=0xbf0000,
+                                                      description='The clan may be searching for a war currently or has not had any recent war activity.'))
         if war.state == 'inWar' or war.state == 'warEnded':
             attacks = await self.get_attack_info(war)
             size = war.team_size
             if not war.is_cwl:
                 size *= 2
-            d += '**Stats**\n{}\t{}\t{}\n'.format(attacks['h_star'], em['STAR'], attacks['e_star'])
-            d += '{}%\t{}\t{}%\n'.format(attacks['h_dest'], em['FIRE'], attacks['e_dest'])
-            d += '{}/{}\t{}\t{}/{}\n\n'.format(attacks['h_hits'], size, em['SWRD'], attacks['e_hits'], size)
+            d += '**Stats**\n'
+            d += f'`{attacks["h_star"]:>8}`\t{em["STAR"]}\t`{attacks["e_star"]:<8}`\n'
+            d += f'`{str(attacks["h_dest"])+"%":>8}`\t{em["FIRE"]}\t`{str(attacks["e_dest"])+"%":<8}`\n'
+            d += f'`{str(attacks["h_hits"])+"/"+str(size):>8}`\t{em["SWRD"]}\t`{str(attacks["e_hits"])+"/"+str(size):8}`\n\n'
         home, away = await self.get_th_composition(war)
         d += '**Composition**\n{}\n'.format(war.clan.name)
         for th, amt in home.items():
-            d += '\t' + '{} {}'.format(em[th], amt)
-        d += '\n\n{}\n'.format(war.opponent.name)
+            d += f'{em[th]} {amt} {" ":3}'
+        d += '\n\n\n{}\n'.format(war.opponent.name)
         for th, amt in away.items():
-            d += '\t' + '{} {}'.format(em[th], amt)
+            d += f'{em[th]} {amt} {" ":3}'
         ping_only = None
         if war.state == 'inWar':
             home_attacks = await self.get_home_attacks(war, tag)
@@ -62,11 +61,11 @@ class WarCommands(commands.Cog):
             remain_hits = await self.attacks_remaining(home_attacks, player_tags, cwl=war.is_cwl)
             full_ping, ping_only = await self.tag_to_name(remain_hits)
             if full_ping:
-                d += '\n\n**Remaining Attacks**\n{}'.format('\n'.join(full_ping))
+                d += '\n\n\n**Remaining Attacks**\n{}'.format('\n'.join(full_ping))
         e = discord.Embed(description=d, color=0x3498db)
         e.set_author(name='{} ({})'.format(war.clan.name, war.clan.tag), icon_url=war.clan.badge.small)
         await ctx.send(embed=e)
-        if ping_only:
+        if ping_only and not no_ping:
             await ctx.send(' '.join(ping_only))
         return
 
@@ -173,6 +172,24 @@ class WarCommands(commands.Cog):
             full.append('{} - {}'.format(result[0][3], user.mention))
             ping.append(user.mention)
         return full, ping
+
+    @staticmethod
+    async def format_time(total_seconds):
+        result = []
+        intervals = (
+            ('w', 604800),
+            ('d', 86400),
+            ('h', 3600),
+            ('m', 60),
+        )
+        for name, count in intervals:
+            value = total_seconds // count
+            if value:
+                total_seconds -= value * count
+                if value == 1:
+                    name = name.rstrip('s')
+                result.append(f'{int(value)}{name}')
+        return ' '.join(result[:2])
 
 
 def setup(client):

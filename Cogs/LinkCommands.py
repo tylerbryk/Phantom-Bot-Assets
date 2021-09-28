@@ -56,7 +56,7 @@ class LinkCommands(commands.Cog):
         try:
             sql = 'INSERT INTO linked_accounts VALUES (%s, %s, %s, %s, %s, %s)'
             val = (
-                user.id, '{}#{}'.format(user.name, user.discriminator), tag, player_name, player_th, player_clan.name)
+                user.id, '{}#{}'.format(user.name, user.discriminator), tag, player_name, player_th, player_clan)
             cursor.execute(sql, val)
             db.commit()
         except Exception:
@@ -156,7 +156,8 @@ class LinkCommands(commands.Cog):
 
     @commands.command(name='clean')
     async def clean_db(self, ctx):
-        mem_id = [member.id for member in ctx.guild.members]
+        guild = self.client.get_guild(self.client.guild)
+        mem_id = [member.id for member in guild.members]
         db, cursor = await self.connect_db()
         cursor.execute('SELECT * FROM linked_accounts')
         result = cursor.fetchall()
