@@ -5,7 +5,7 @@ import time
 import discord
 from discord.ext import commands
 
-extensions = ['LinkCommands', 'WarCommands', 'MiscCommands', 'RedditCommands']
+extensions = ['LinkCommands', 'WarCommands', 'MiscCommands', 'RedditCommands', 'InfoCommands']
 
 GUILD = 819709187239313428
 EMOJI_GUILD = 803663172762337350
