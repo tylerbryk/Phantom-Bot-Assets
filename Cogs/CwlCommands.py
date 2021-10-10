@@ -50,7 +50,9 @@ class CwlCommands(commands.Cog):
                 guild.default_role: discord.PermissionOverwrite(view_channel=False)
             }
             category = await guild.create_category(name=f'════ {clan} CWL ════', overwrites=overwrites)
-            await category.create_text_channel(name=f'{clan.lower()}-cwl')
+            main_channel = await category.create_text_channel(name=f'{clan.lower()}-cwl')
+            cursor.execute(f'UPDATE clans SET cwl_channel_id = "{main_channel.id}" WHERE abv = "{clan}"')
+            db.commit()
             if active_players < 30:
                 for i in range(1, 16):
                     await category.create_text_channel(name=f'base-{i}-{clan.lower()}')
@@ -90,8 +92,8 @@ class CwlCommands(commands.Cog):
         return await msg.edit(embed=discord.Embed(title='CWL Channels & Roles Removed!', color=0x287e29,
                                                   description=f'\u274C {n_cat} Categories\n\u274C {n_ch} Channels'))
 
-    @commands.command(name='remove-tourn')
-    @commands.has_permissions(administrator=True)
+    # @commands.command(name='remove-tourn')
+    # @commands.has_permissions(administrator=True)
     async def remove_tournament_roles(self, ctx):
         msg = await ctx.send(embed=discord.Embed(title='Removing Tournament Roles!', color=0xf1c40f,
                                                  description='Hang tight, this operation may take a few minutes.'))

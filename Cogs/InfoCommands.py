@@ -54,78 +54,40 @@ server_rules_text = '''1)** __Nickname__**
 
 # =============================================================================================================
 
-dz_rules_text = '''**__Requirements:__**
-> • TH14 Only
-> • BK80, AQ80, GW55, RC30
-> • Max or near max bases only
+clan_rules_text = '''**__Danger Zone Requirements:__**
+> • TH14 - BK75, AQ75, GW50, RC25
+> • Base at least 90% max from previous Town Hall
 
-**__Clan Games:__**
-> • Not mandatory 
-> • 1000 pt. minimum if you do participate 
-
-**__Donations:__** 
-> • No donation ratio or requirements
-> • Donate as much as possible
-> • Make an effort to fill pending donation requests before requesting yourself
-> • Having little or no donations at the end of the season may result in a kick
-
-**__War Rules:__**
-> • All heroes must be up for war 
-> • No hits in the first hour
-> • First hour is used to scout and claim bases of the **same** town hall
-> • Claim the highest ranked base that you are confident in tripling
-> • If a claimed base has not been hit after the first 12 hours, it is fair game
-> • Feel free to cleanup/triple a base after the 12-hour mark
-> • Both attacks are **mandatory** and should be done by the 23-hour mark
-
-**__CWL Rules:__**
-> • Register via the form sent at the end of each month
-> • All heroes must be up during CWL week
-> • CWL lineups will be sent out before the 1st day of each month 
-> • You may be assigned to this clan, or a similarly ranked clan in the family
-> • Clan selection is based on war hits, war defenses, and friendly challenges 
-> • Before attacking in CWL, you are **required** to submit a plan on Discord
-> • No attacking in the first hour as this time should be used to claim a base
-> • Feel free to reach out to leadership should you ever need anything
-
-**__Attack Planning Resources:__**
-> • Spotter on Voice Chat
-> • Collaborating with other team members
-> • Using our clash / Burnt Base bots
-
-⬆️ **SCROLL UP!** ⬆️
-'''
-
-# =============================================================================================================
-
-dl_rules_text = '''**__Requirements:__**
-> • TH13 BK70, AQ70, GW45, RC15
-> • TH14 BK75, AQ75, GW50, RC25
+**__Downfall Legend Requirements:__**
+> • TH14 - BK70, AQ70, GW45, RC20
+> • TH13 - BK65, AQ65, GW40, RC15
+> • TH12 - BK60, AQ60, GW35
 > • Base at least 90% max from previous Town Hall
 
 **__Clan Games:__**
-> • 1000 point minimum
+> • Clan Games are **optional**
+> • 1000 point minimum, if you decide to participate
 
 **__Donations:__**
-> • No donation ratio or requirements
 > • Donate as much as possible
+> • No donation ratio or requirements
 > • Make an effort to fill pending donation requests before requesting yourself
 > • Having little or no donations at the end of the season may result in a kick
 
 **__War Rules:__**
-> • All heroes must be up for war
 > • No hits in the first hour
+> • All heroes **must be up** for war, pets are **not** required
 > • First hour is used to scout and claim bases of the **same** town hall
 > • Claim the highest ranked base that you are confident in tripling
-> • If a claimed base has not been hit after the first 12 hours, it is fair game
+> • If a claimed base has not been hit after the first 16 hours, it is fair game
 > • Feel free to cleanup/triple a base after the 12-hour mark
 > • Both attacks are **mandatory** and should be done by the 23-hour mark
 
 **__CWL Rules:__**
 > • Register via the form sent at the end of each month
 > • All heroes must be up during CWL week
-> • CWL lineups will be sent out before the 1st day of each month
-> • You may be assigned to this clan, or a similarly ranked clan in the family
+> • CWL lineups will be sent out by the 1st day of each month
+> • You will be assigned to one of the clans in our family
 > • Clan selection is based on war hits, war defenses, and friendly challenges
 > • Before attacking in CWL, you are **required** to submit a plan on Discord
 > • No attacking in the first hour as this time should be used to claim a base
@@ -221,23 +183,17 @@ class InfoCommands(commands.Cog):
     def __init__(self, client):
         self.client = client
 
-    @commands.command(name='info-rules')
+    @commands.command(name='info-rules-serv')
     @commands.has_permissions(administrator=True)
     async def send_server_rules(self, ctx):
         await ctx.send(file=discord.File('banners/server_rules.png'))
         await ctx.send(server_rules_text)
 
-    @commands.command(name='info-dz-rules')
+    @commands.command(name='info-rules-clan')
     @commands.has_permissions(administrator=True)
-    async def send_dz_rules(self, ctx):
-        await ctx.send(file=discord.File('banners/dz_rules.png'))
-        await ctx.send(dz_rules_text)
-
-    @commands.command(name='info-dl-rules')
-    @commands.has_permissions(administrator=True)
-    async def send_dl_rules(self, ctx):
-        await ctx.send(file=discord.File('banners/dl_rules.png'))
-        await ctx.send(dl_rules_text)
+    async def send_clan_rules(self, ctx):
+        await ctx.send(file=discord.File('banners/clan_rules.png'))
+        await ctx.send(clan_rules_text)
 
     @commands.command(name='info-roles')
     @commands.has_permissions(administrator=True)

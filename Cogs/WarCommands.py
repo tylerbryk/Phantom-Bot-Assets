@@ -4,22 +4,25 @@ from datetime import datetime
 
 import pymysql
 import discord
-from discord.ext import commands
+from discord.ext import commands, tasks
 
 
 class WarCommands(commands.Cog):
     def __init__(self, client):
         self.client = client
+        self.war_updates.start()
 
     @commands.command(name='war')
     async def war(self, ctx, abv, *no_ping):
-        db, cursor = await self.connect_db()
-        cursor.execute('SELECT * FROM clans WHERE abv = "{}"'.format(abv))
-        result = cursor.fetchall()
-        if not result:
-            return await ctx.send(
-                'Invalid input! Please enter the two-letter abbreviation for the desired clan. (DZ, GC, etc.)')
-        tag = result[0][2]
+        tag = abv
+        if '#' not in abv:
+            db, cursor = await self.connect_db()
+            cursor.execute('SELECT * FROM clans WHERE abv = "{}"'.format(abv))
+            result = cursor.fetchall()
+            if not result:
+                return await ctx.send(
+                    'Invalid input! Please enter the two-letter abbreviation for the desired clan. (DZ, GC, etc.)')
+            tag = result[0][2]
         war = await self.client.coc.get_current_war(tag)
         guild = self.client.get_guild(self.client.emoji_guild)
         em = {name: (await guild.fetch_emoji(id)) for name, id in self.client.emoji_dict.items()}
@@ -190,6 +193,24 @@ class WarCommands(commands.Cog):
                     name = name.rstrip('s')
                 result.append(f'{int(value)}{name}')
         return ' '.join(result[:2])
+
+    @tasks.loop(minutes=1)
+    async def war_updates(self):
+        db, cursor = await self.connect_db()
+        cursor.execute('SELECT tag, cwl_channel_id FROM clans')
+        tags = cursor.fetchall()
+        gmt = datetime.fromtimestamp(time.mktime(time.gmtime()))
+        for tag in tags:
+            war = await self.client.coc.get_current_war(tag[0])
+            if war.state == 'inWar':
+                t = (war.end_time.time - gmt).total_seconds()
+                if (43200 < t < 43260) or (21600 < t < 21660) or (10800 < t < 10860) or (3600 < t < 3660):
+                    channel = self.client.get_channel(tag[1])
+                    await self.war(channel, tag[0])
+
+    @war_updates.before_loop
+    async def before_war_updates(self):
+        await self.client.wait_until_ready()
 
 
 def setup(client):

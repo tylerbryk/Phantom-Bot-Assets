@@ -17,7 +17,7 @@ class RedditCommands(commands.Cog):
                                        password=os.getenv('COCPWD'))
         # self.scrape_subreddit.start()
 
-    @commands.command(name='e')
+    # @commands.command(name='e')
     async def test_ping(self, ctx):
         redditor = await self.reddit.redditor('PhantomFamily')
         await redditor.message("TEST", "test message from Async PRAW")

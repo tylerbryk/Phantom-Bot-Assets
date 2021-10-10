@@ -13,8 +13,7 @@ dz_role = '<@&819709187285975073>'
 dl_role = '<@&819709187285975071>'
 rc_role = '<@&819709187285975070>'
 sr_rules = '<#819709187613392913>'
-dz_rules = '<#819709187613392914>'
-dl_rules = '<#819709187822583808>'
+cl_rules = '<#819709187613392914>'
 dz_emoji = 852634339844816966
 dl_emoji = 858033764453580820
 ga_emoji = 820103306604707860
@@ -66,11 +65,11 @@ class MiscCommands(commands.Cog):
         if ctx.emoji.id == dz_emoji:
             channel = self.client.get_channel(dz_channel)
             await channel.send(message.format(ctx.member.mention,
-                                              'Danger Zone', sr_rules, dz_rules, dz_role))
+                                              'Danger Zone', sr_rules, cl_rules, dz_role))
         elif ctx.emoji.id == dl_emoji:
             channel = self.client.get_channel(dl_channel)
             await channel.send(message.format(ctx.member.mention,
-                                              'Downfall Legend', sr_rules, dl_rules, dl_role))
+                                              'Downfall Legend', sr_rules, cl_rules, dl_role))
         elif ctx.emoji.id == ga_emoji:
             channel = self.client.get_channel(wlc_channel)
             await channel.send('{} is a **General Applicant**\n\nPlease do the following:\n1. Read {}\n2. Send a screenshot of your base and profile\n3. Send your player tag (Ex: #5GC47AE)\n\nA {} will be online to assist you shortly!'.format(ctx.member.mention, sr_rules, rc_role))
